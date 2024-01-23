@@ -7,8 +7,6 @@ ec2 = boto3.client('ec2')
 vpc = ec2.create_vpc(CidrBlock='10.0.0.0/16')
 vpc_id = vpc['Vpc']['VpcId']
 
-# Tag the VPC
-ec2.create_tags(Resources=[vpc_id], Tags=[{'Key': 'wj', 'Value': 'wjVPC-v1'}])
 
 print(f"VPC Created: {vpc_id}")
 
@@ -16,9 +14,6 @@ print(f"VPC Created: {vpc_id}")
 igw = ec2.create_internet_gateway()
 igw_id = igw['InternetGateway']['InternetGatewayId']
 ec2.attach_internet_gateway(InternetGatewayId=igw_id, VpcId=vpc_id)
-
-# Tag the Internet Gateway
-ec2.create_tags(Resources=[igw_id], Tags=[{'Key': 'wj', 'Value': 'wjIGW-v1'}])
 
 print(f"Internet Gateway Created: {igw_id}")
 
@@ -28,9 +23,6 @@ public_subnet2 = ec2.create_subnet(CidrBlock='10.0.2.0/24', VpcId=vpc_id, Availa
 public_subnet1_id = public_subnet1['Subnet']['SubnetId']
 public_subnet2_id = public_subnet2['Subnet']['SubnetId']
 
-# Tag the Public Subnets
-ec2.create_tags(Resources=[public_subnet1_id], Tags=[{'Key': 'wj', 'Value': 'wjPublicSubnet1-v1'}])
-ec2.create_tags(Resources=[public_subnet2_id], Tags=[{'Key': 'wj', 'Value': 'wjPublicSubnet2-v1'}])
 
 print(f"Public Subnet 1: {public_subnet1_id}")
 print(f"Public Subnet 2: {public_subnet2_id}")
@@ -41,10 +33,6 @@ private_subnet2 = ec2.create_subnet(CidrBlock='10.0.4.0/24', VpcId=vpc_id, Avail
 private_subnet1_id = private_subnet1['Subnet']['SubnetId']
 private_subnet2_id = private_subnet2['Subnet']['SubnetId']
 
-# Tag the Private Subnets
-ec2.create_tags(Resources=[private_subnet1_id], Tags=[{'Key': 'wj', 'Value': 'wjPrivateSubnet1-v1'}])
-ec2.create_tags(Resources=[private_subnet2_id], Tags=[{'Key': 'wj', 'Value': 'wjPrivateSubnet2-v1'}])
-
 print(f"Private Subnet 1: {private_subnet1_id}")
 print(f"Private Subnet 2: {private_subnet2_id}")
 
@@ -52,9 +40,6 @@ print(f"Private Subnet 2: {private_subnet2_id}")
 pub_route_table = ec2.create_route_table(VpcId=vpc_id)
 pub_route_table_id = pub_route_table['RouteTable']['RouteTableId']
 ec2.create_route(DestinationCidrBlock='0.0.0.0/0', GatewayId=igw_id, RouteTableId=pub_route_table_id)
-
-# Tag the Route Table for public subnets
-ec2.create_tags(Resources=[pub_route_table_id], Tags=[{'Key': 'wj', 'Value': 'wjPubRouteTable-v1'}])
 
 print(f"Public Route Table Created: {pub_route_table_id}")
 
@@ -74,10 +59,6 @@ nat_gw2 = ec2.create_nat_gateway(SubnetId=public_subnet2_id, AllocationId=eip2_i
 nat_gw1_id = nat_gw1['NatGateway']['NatGatewayId']
 nat_gw2_id = nat_gw2['NatGateway']['NatGatewayId']
 
-# Tag the NAT Gateways
-ec2.create_tags(Resources=[nat_gw1_id], Tags=[{'Key': 'wj', 'Value': 'wjNATGW1-v1'}])
-ec2.create_tags(Resources=[nat_gw2_id], Tags=[{'Key': 'wj', 'Value': 'wjNATGW2-v1'}])
-
 print(f"NAT Gateway 1 Created: {nat_gw1_id}")
 print(f"NAT Gateway 2 Created: {nat_gw2_id}")
 
@@ -88,9 +69,6 @@ priv_route_table2 = ec2.create_route_table(VpcId=vpc_id)
 priv_route_table1_id = priv_route_table1['RouteTable']['RouteTableId']
 priv_route_table2_id = priv_route_table2['RouteTable']['RouteTableId']
 
-# Tag the Route Tables for private subnets
-ec2.create_tags(Resources=[priv_route_table1_id], Tags=[{'Key': 'wj', 'Value': 'wjPrivRouteTable1-v1'}])
-ec2.create_tags(Resources=[priv_route_table2_id], Tags=[{'Key': 'wj', 'Value': 'wjPrivRouteTable2-v1'}])
 
 print(f"Private Route Table 1 Created: {priv_route_table1_id}")
 print(f"Private Route Table 2 Created: {priv_route_table2_id}")

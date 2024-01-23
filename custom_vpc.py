@@ -73,17 +73,26 @@ priv_route_table2_id = priv_route_table2['RouteTable']['RouteTableId']
 print(f"Private Route Table 1 Created: {priv_route_table1_id}")
 print(f"Private Route Table 2 Created: {priv_route_table2_id}")
 
-# Get NAT Gateway information
-nat_gw1_info = ec2.describe_nat_gateways(NatGatewayIds=[nat_gw1_id])
-nat_gw2_info = ec2.describe_nat_gateways(NatGatewayIds=[nat_gw2_id])
+nat_gw_available = False
 
-# Get NAT Gateway status
-nat_gw1_status = nat_gw1_info['NatGateways'][0]['State']
-nat_gw2_status = nat_gw2_info['NatGateways'][0]['State']
-
-while nat_gw1_status != 'available' or nat_gw2_status != 'available':
+while nat_gw_available = False:
     
     print("waiting for NAT Gateways to become available...")
+
+    # Get NAT Gateway information
+    nat_gw1_info = ec2.describe_nat_gateways(NatGatewayIds=[nat_gw1_id])
+    nat_gw2_info = ec2.describe_nat_gateways(NatGatewayIds=[nat_gw2_id])
+
+    # Get NAT Gateway status
+    nat_gw1_status = nat_gw1_info['NatGateways'][0]['State']
+    nat_gw2_status = nat_gw2_info['NatGateways'][0]['State']
+
+    if nat_gw1_status == 'available' and nat_gw2_status == 'available':
+       print("NAT Gateways are available")
+       nat_gw_available = True
+
+print(f"NAT Gateway 1 Created: {nat_gw1_id}")
+print(f"NAT Gateway 2 Created: {nat_gw2_id}")
 
 # Create routes in private route tables to NAT Gateways
 ec2.create_route(RouteTableId=priv_route_table1_id, DestinationCidrBlock='0.0.0.0/0', NatGatewayId=nat_gw1_id)
